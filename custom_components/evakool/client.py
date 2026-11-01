@@ -54,21 +54,27 @@ class EvakoolClient:
 
     def __init__(
         self,
-        ble_device: BLEDevice,
+        address: str,
+        ble_device_lookup: Callable[[], BLEDevice | None],
         *,
         keep_connected: bool = True,
+        closed: bool = False,
         on_status: Callable[[FridgeStatus], None] | None = None,
         on_error: Callable[[EvakoolError], None] | None = None,
+        on_connection: Callable[[bool], None] | None = None,
     ) -> None:
-        self._ble_device = ble_device
+        self.address = address
+        # Searched on every connection so the best adapter/proxy currently in range is used.
+        self._lookup = ble_device_lookup
         self.keep_connected = keep_connected
         self.on_status = on_status
         # Faults/invalid frames that arrive while no request is waiting for status.
         self.on_error = on_error
+        self.on_connection = on_connection
         self._client: BleakClientWithServiceCache | None = None
         self._lock = asyncio.Lock()
         self._operation: asyncio.Task | None = None
-        self._closed = False
+        self._closed = closed
         self._frames = FrameBuffer()
         self._waiters: list[asyncio.Future[FridgeStatus]] = []
         self._quiet: asyncio.TimerHandle | None = None
@@ -76,16 +82,12 @@ class EvakoolClient:
         self.last_frame: str | None = None
 
     @property
-    def address(self) -> str:
-        return self._ble_device.address
-
-    @property
     def connected(self) -> bool:
         return self._client is not None and self._client.is_connected
 
-    def set_ble_device(self, ble_device: BLEDevice) -> None:
-        """Use the freshest path/adapter (or proxy) for the next connection."""
-        self._ble_device = ble_device
+    @property
+    def closed(self) -> bool:
+        return self._closed
 
     async def async_status(self) -> FridgeStatus:
         return await self._serialized(None, lambda _: True, STATUS_TIMEOUT)
@@ -111,13 +113,20 @@ class EvakoolClient:
         return await self._serialized(power_command(on), lambda s: s.on == on, CONFIRM_TIMEOUT)
 
     async def async_close(self) -> None:
-        """Release the fridge for good, cancelling any in-flight connect/request."""
+        """Release the fridge and refuse new requests until ``open()``.
+
+        Any in-flight connect/request is cancelled so another app can connect promptly.
+        """
         self._closed = True
         operation = self._operation
-        if operation is not None and operation is not asyncio.current_task():
+        if operation is not None:
             operation.cancel()
         async with self._lock:
             await self._disconnect()
+
+    def open(self) -> None:
+        """Allow connections again after ``async_close()``."""
+        self._closed = False
 
     async def _serialized(
         self,
@@ -127,10 +136,17 @@ class EvakoolClient:
     ) -> FridgeStatus:
         async with self._lock:
             if self._closed:
-                raise EvakoolConnectionError("Connection closed")
-            self._operation = asyncio.current_task()
+                raise EvakoolConnectionError("Bluetooth connection is turned off")
+            # A separate task so closing cancels only the BLE work, not the caller.
+            operation = asyncio.ensure_future(self._run(command, confirmed, timeout))
+            self._operation = operation
             try:
-                return await self._run(command, confirmed, timeout)
+                return await operation
+            except asyncio.CancelledError:
+                current = asyncio.current_task()
+                if self._closed and not (current and current.cancelling()):
+                    raise EvakoolConnectionError("Bluetooth connection was turned off") from None
+                raise
             finally:
                 self._operation = None
 
@@ -183,14 +199,19 @@ class EvakoolClient:
         if self.connected:
             return
         await self._disconnect()
+        ble_device = self._lookup()
+        if ble_device is None:
+            raise EvakoolConnectionError(
+                "Fridge not found by any connectable Bluetooth adapter or proxy"
+            )
         _LOGGER.debug("Connecting to %s", self.address)
         try:
             client = await establish_connection(
                 BleakClientWithServiceCache,
-                self._ble_device,
-                self._ble_device.name or self.address,
+                ble_device,
+                ble_device.name or self.address,
                 disconnected_callback=self._on_disconnected,
-                ble_device_callback=lambda: self._ble_device,
+                ble_device_callback=lambda: self._lookup() or ble_device,
             )
         except (BleakError, TimeoutError) as err:
             raise EvakoolConnectionError(f"Could not connect: {err}") from err
@@ -211,6 +232,7 @@ class EvakoolClient:
         except (BleakError, TimeoutError) as err:
             raise EvakoolConnectionError(f"Could not enable notifications: {err}") from err
         _LOGGER.debug("Connected to %s", self.address)
+        self._connection_changed(True)
 
     async def _write(self, command: str) -> None:
         client = self._client
@@ -229,6 +251,7 @@ class EvakoolClient:
         self._frames.clear()
         self._fail_waiters(EvakoolConnectionError("Disconnected"))
         if client is not None:
+            self._connection_changed(False)
             try:
                 await client.disconnect()
             except BleakError as err:
@@ -242,6 +265,11 @@ class EvakoolClient:
         self._cancel_quiet()
         self._frames.clear()
         self._fail_waiters(EvakoolConnectionError("Fridge disconnected"))
+        self._connection_changed(False)
+
+    def _connection_changed(self, connected: bool) -> None:
+        if self.on_connection is not None:
+            self.on_connection(connected)
 
     def _on_notify(self, client: BleakClientWithServiceCache, data: bytearray) -> None:
         if client is not self._client:

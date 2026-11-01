@@ -34,7 +34,8 @@ advertising the EVAKOOL service or a `DownUnder_*` / `CoolRide` name and shows a
 **Discovered** card under **Settings → Devices & services**. You can also choose
 **Add integration → EVAKOOL Bluetooth Fridge** and select it from the list.
 
-Setup retries automatically until the fridge is in range and returns a status frame.
+Setup completes even if the fridge is out of range. Its data entities stay
+unavailable, and the integration keeps searching for the fridge on every poll.
 
 ## Entities
 
@@ -48,6 +49,8 @@ Setup retries automatically until the fridge is in range and returns a status fr
 | Right target temperature | Number | Setpoint control |
 | Compressor mode | Select | Switch between Eco and Max |
 | Power | Switch | Fridge on/off |
+| Bluetooth connection | Switch (config) | Search and connect (on) or release the fridge (off) |
+| Connected | Binary sensor (diagnostic) | Whether Home Assistant currently holds the Bluetooth link |
 
 Temperatures are reported in the fridge's configured unit (°C or °F), and Home
 Assistant converts them to your display unit. Targets are limited to
@@ -62,6 +65,17 @@ your model's rating.
   command is **not** resent.
 - Fault frames (`/SEE/…`, `/SCE/…`) or lost connections make the entities
   unavailable until the next successful status update.
+
+### Sharing the fridge with another app
+
+The fridge accepts only **one** Bluetooth client at a time. To use the phone app, turn **Bluetooth connection** off. Home Assistant then disconnects
+immediately, cancelling any connection attempt in progress, and stops polling. The
+other entities show as unavailable until you reconnect.
+
+Turn it back on to search for the fridge through any connectable adapter or proxy and
+reconnect straight away. The switch state survives restarts, and the **Connected**
+sensor shows whether the link is actually up. You can automate the switch, for
+example to release the fridge when your phone arrives nearby.
 
 ## Options
 

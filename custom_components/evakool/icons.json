@@ -1,0 +1,17 @@
+{
+  "entity": {
+    "binary_sensor": {
+      "connected": { "default": "mdi:bluetooth-off", "state": { "on": "mdi:bluetooth-connect" } }
+    },
+    "switch": {
+      "connection": { "default": "mdi:bluetooth-off", "state": { "on": "mdi:bluetooth" } },
+      "power": { "default": "mdi:power" }
+    },
+    "select": {
+      "mode": { "default": "mdi:snowflake" }
+    },
+    "sensor": {
+      "compressor_mode": { "default": "mdi:snowflake" }
+    }
+  }
+}

@@ -113,7 +113,7 @@ def make(fridge: FakeFridge, **kwargs):
     patcher = patch.object(client_module, "establish_connection", establish)
     patcher.start()
     device = SimpleNamespace(address="AA:BB:CC:DD:EE:FF", name="DownUnder_1234")
-    return EvakoolClient(device, **kwargs), fake, connections, patcher
+    return EvakoolClient(device.address, lambda: device, **kwargs), fake, connections, patcher
 
 
 async def test_status_query_reassembles_split_notifications_and_pushes():
@@ -255,13 +255,50 @@ async def test_close_cancels_inflight_connect_and_blocks_new_requests():
         await asyncio.sleep(3600)
 
     device = SimpleNamespace(address="AA:BB:CC:DD:EE:FF", name="DownUnder_1234")
-    client = EvakoolClient(device)
+    client = EvakoolClient(device.address, lambda: device)
     with patch.object(client_module, "establish_connection", hanging):
         request = asyncio.create_task(client.async_status())
         await started.wait()
         async with asyncio.timeout(1):
             await client.async_close()
-        with pytest.raises(asyncio.CancelledError):
+        with pytest.raises(EvakoolConnectionError, match="turned off"):
             await request
-        with pytest.raises(EvakoolConnectionError, match="closed"):
+        with pytest.raises(EvakoolConnectionError, match="turned off"):
             await client.async_status()
+
+
+async def test_close_releases_link_until_reopened_and_reports_connection_state():
+    states = []
+    client, fake, connections, patcher = make(FakeFridge(), on_connection=states.append)
+    try:
+        await client.async_status()
+        assert states == [True]
+        await client.async_close()
+        assert client.closed and not client.connected and fake.disconnects == 1
+        assert states == [True, False]
+        with pytest.raises(EvakoolConnectionError, match="turned off"):
+            await client.async_set_mode(True)
+        assert len(connections) == 1, "no reconnect while closed"
+        client.open()
+        assert (await client.async_status()).left == 4
+        assert len(connections) == 2 and states == [True, False, True]
+        connections[1]["disconnected_callback"](fake)
+        assert states[-1] is False
+    finally:
+        patcher.stop()
+
+
+async def test_search_reports_fridge_not_in_range():
+    client = EvakoolClient("AA:BB:CC:DD:EE:FF", lambda: None)
+    with pytest.raises(EvakoolConnectionError, match="not found"):
+        await client.async_status()
+
+
+async def test_closed_at_start_never_connects():
+    client, _fake, connections, patcher = make(FakeFridge(), closed=True)
+    try:
+        with pytest.raises(EvakoolConnectionError, match="turned off"):
+            await client.async_status()
+        assert connections == []
+    finally:
+        patcher.stop()

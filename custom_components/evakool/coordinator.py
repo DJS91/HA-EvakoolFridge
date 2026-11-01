@@ -12,7 +12,7 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .client import EvakoolClient, EvakoolError
-from .const import DOMAIN
+from .const import CONF_CONNECTION_ENABLED, DEFAULT_CONNECTION_ENABLED, DOMAIN
 from .protocol import FridgeStatus
 
 if TYPE_CHECKING:
@@ -31,21 +31,53 @@ class EvakoolCoordinator(DataUpdateCoordinator[FridgeStatus]):
         client: EvakoolClient,
         scan_interval: int,
     ) -> None:
+        self._interval = timedelta(seconds=scan_interval)
+        self.connection_enabled: bool = entry.data.get(
+            CONF_CONNECTION_ENABLED, DEFAULT_CONNECTION_ENABLED
+        )
         super().__init__(
             hass,
             _LOGGER,
             config_entry=entry,
             name=f"{DOMAIN} {client.address}",
-            update_interval=timedelta(seconds=scan_interval),
+            update_interval=self._interval if self.connection_enabled else None,
             always_update=False,
         )
         self.client = client
 
     async def _async_update_data(self) -> FridgeStatus:
+        if not self.connection_enabled:
+            # A refresh already scheduled before the connection was turned off.
+            if self.data is None:
+                raise UpdateFailed("Bluetooth connection is turned off")
+            return self.data
         try:
             return await self.client.async_status()
         except EvakoolError as err:
             raise UpdateFailed(str(err)) from err
+
+    async def async_set_connection_enabled(self, enabled: bool) -> None:
+        """Hold or release the fridge's single BLE connection; persists across restarts."""
+        entry = self.config_entry
+        self.connection_enabled = enabled
+        if entry.data.get(CONF_CONNECTION_ENABLED, DEFAULT_CONNECTION_ENABLED) != enabled:
+            self.hass.config_entries.async_update_entry(
+                entry, data={**entry.data, CONF_CONNECTION_ENABLED: enabled}
+            )
+        if enabled:
+            self.client.open()
+            self.update_interval = self._interval
+            # Search for the fridge now rather than at the next poll; failures keep retrying.
+            await self.async_refresh()
+        else:
+            self.update_interval = None
+            self._unschedule_refresh()
+            await self.client.async_close()
+            self.async_update_listeners()
+
+    @callback
+    def async_connection_changed(self, _connected: bool) -> None:
+        self.async_update_listeners()
 
     @callback
     def async_pushed_status(self, status: FridgeStatus) -> None:

@@ -4,7 +4,9 @@
     "step": {
       "user": {
         "description": "Select your EVAKOOL fridge. Close the phone app first: the fridge accepts only one Bluetooth connection.",
-        "data": { "address": "Fridge" }
+        "data": {
+          "address": "Fridge"
+        }
       },
       "bluetooth_confirm": {
         "description": "Set up {name}? Close the phone app first: the fridge accepts only one Bluetooth connection."
@@ -33,26 +35,52 @@
   },
   "entity": {
     "number": {
-      "left_target": { "name": "Left target temperature" },
-      "right_target": { "name": "Right target temperature" }
+      "left_target": {
+        "name": "Left target temperature"
+      },
+      "right_target": {
+        "name": "Right target temperature"
+      }
     },
     "select": {
       "mode": {
         "name": "Compressor mode",
-        "state": { "eco": "Eco", "max": "Max" }
+        "state": {
+          "eco": "Eco",
+          "max": "Max"
+        }
       }
     },
     "sensor": {
-      "left_temperature": { "name": "Left temperature" },
-      "right_temperature": { "name": "Right temperature" },
-      "voltage": { "name": "Supply voltage" },
+      "left_temperature": {
+        "name": "Left temperature"
+      },
+      "right_temperature": {
+        "name": "Right temperature"
+      },
+      "voltage": {
+        "name": "Supply voltage"
+      },
       "compressor_mode": {
         "name": "Compressor mode",
-        "state": { "eco": "Eco", "max": "Max" }
+        "state": {
+          "eco": "Eco",
+          "max": "Max"
+        }
       }
     },
     "switch": {
-      "power": { "name": "Power" }
+      "power": {
+        "name": "Power"
+      },
+      "connection": {
+        "name": "Bluetooth connection"
+      }
+    },
+    "binary_sensor": {
+      "connected": {
+        "name": "Connected"
+      }
     }
   }
 }

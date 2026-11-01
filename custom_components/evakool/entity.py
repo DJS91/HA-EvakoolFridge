@@ -31,7 +31,11 @@ class EvakoolEntity(CoordinatorEntity[EvakoolCoordinator]):
 
     @property
     def available(self) -> bool:
-        return super().available and self.coordinator.data is not None
+        return (
+            self.coordinator.connection_enabled
+            and super().available
+            and self.coordinator.data is not None
+        )
 
     @property
     def temperature_unit(self) -> str:
