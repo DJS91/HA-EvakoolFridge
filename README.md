@@ -4,11 +4,6 @@ Unofficial custom integration that connects Home Assistant directly to an
 **EVAKOOL Down Under / CoolRide** dual-zone fridge over Bluetooth Low Energy.
 It is not affiliated with or supported by EVAKOOL.
 
-The protocol is ported from the camping-fridge support in
-[Open-DiKey](https://github.com/DJS91/Open-DiKey), which is based on the official
-Down Under II 2.0.0 app (service `E530`, writes without response to `E531`,
-notifications from `E532`).
-
 ## Requirements
 
 - Home Assistant **2026.10** or newer.
