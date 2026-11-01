@@ -1,0 +1,58 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "description": "Select your EVAKOOL fridge. Close the phone app first: the fridge accepts only one Bluetooth connection.",
+        "data": { "address": "Fridge" }
+      },
+      "bluetooth_confirm": {
+        "description": "Set up {name}? Close the phone app first: the fridge accepts only one Bluetooth connection."
+      }
+    },
+    "abort": {
+      "already_configured": "This fridge is already configured.",
+      "already_in_progress": "Setup for this fridge is already in progress.",
+      "no_devices_found": "No EVAKOOL fridge was found by a connectable Bluetooth adapter or proxy.",
+      "not_supported": "This device is not a supported EVAKOOL fridge."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "scan_interval": "Poll interval",
+          "keep_connected": "Keep Bluetooth connected between polls"
+        },
+        "data_description": {
+          "scan_interval": "How often to request a status update.",
+          "keep_connected": "Faster updates and controls. Turn off to let the phone app connect between polls."
+        }
+      }
+    }
+  },
+  "entity": {
+    "number": {
+      "left_target": { "name": "Left target temperature" },
+      "right_target": { "name": "Right target temperature" }
+    },
+    "select": {
+      "mode": {
+        "name": "Compressor mode",
+        "state": { "eco": "Eco", "max": "Max" }
+      }
+    },
+    "sensor": {
+      "left_temperature": { "name": "Left temperature" },
+      "right_temperature": { "name": "Right temperature" },
+      "voltage": { "name": "Supply voltage" },
+      "compressor_mode": {
+        "name": "Compressor mode",
+        "state": { "eco": "Eco", "max": "Max" }
+      }
+    },
+    "switch": {
+      "power": { "name": "Power" }
+    }
+  }
+}

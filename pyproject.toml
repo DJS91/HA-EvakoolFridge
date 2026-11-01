@@ -1,0 +1,45 @@
+[project]
+name = "evakool-home-assistant"
+version = "0.1.0"
+description = "Unofficial EVAKOOL Down Under / CoolRide Bluetooth fridge integration for Home Assistant"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+test = [
+    "pytest>=8",
+    "pytest-asyncio>=1",
+    "ruff>=0.14",
+]
+# Core plus the pinned requirements of HA's bluetooth, usb and hassio components (not installed by core).
+homeassistant-test = [
+    "homeassistant==2026.10.4",
+    "bleak==3.0.2",
+    "bleak-retry-connector==4.7.1",
+    "bluetooth-adapters==2.4.0",
+    "bluetooth-auto-recovery==1.6.4",
+    "bluetooth-data-tools==1.29.24",
+    "dbus-fast==5.0.22",
+    "habluetooth==7.1.2",
+    "aiousbwatcher==1.1.2",
+    "serialx==1.11.0",
+    "aiohasupervisor==0.6.0",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.dependency-groups]
+homeassistant-test = { requires-python = ">=3.14.2" }
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
