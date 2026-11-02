@@ -2,19 +2,38 @@
   "domain": "evakool",
   "name": "EVAKOOL Bluetooth Fridge",
   "bluetooth": [
-    { "connectable": true, "service_uuid": "0000e530-1212-efde-1523-785feabcd123" },
-    { "connectable": true, "local_name": "DownUnder_*" },
-    { "connectable": true, "local_name": "CoolRide*" },
-    { "connectable": true, "local_name": "Cool Ride*" }
+    {
+      "connectable": true,
+      "service_uuid": "0000e530-1212-efde-1523-785feabcd123"
+    },
+    {
+      "connectable": true,
+      "local_name": "DownUnder_*"
+    },
+    {
+      "connectable": true,
+      "local_name": "CoolRide*"
+    },
+    {
+      "connectable": true,
+      "local_name": "Cool Ride*"
+    }
   ],
-  "codeowners": ["@DJS91"],
+  "codeowners": [
+    "@DJS91"
+  ],
   "config_flow": true,
-  "dependencies": ["bluetooth_adapters"],
+  "dependencies": [
+    "bluetooth_adapters"
+  ],
   "documentation": "https://github.com/DJS91/HA-EvakoolFridge",
   "integration_type": "device",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/DJS91/HA-EvakoolFridge/issues",
-  "loggers": ["bleak", "bleak_retry_connector"],
+  "loggers": [
+    "bleak",
+    "bleak_retry_connector"
+  ],
   "requirements": [],
   "version": "1.0.0"
 }
