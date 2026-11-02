@@ -1,4 +1,4 @@
-# EVAKOOL Bluetooth Fridge for Home Assistant
+# <img src="custom_components/evakool/brand/icon.png" alt="EVAKOOL logo" width="48" align="absmiddle"> EVAKOOL Bluetooth Fridge for Home Assistant
 
 Unofficial custom integration that connects Home Assistant directly to an
 **EVAKOOL Down Under / CoolRide** dual-zone fridge over Bluetooth Low Energy.
@@ -17,6 +17,10 @@ It is not affiliated with or supported by EVAKOOL.
 ## Install
 
 ### HACS (custom repository)
+
+[![Open your Home Assistant instance and open this repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=DJS91&repository=HA-EvakoolFridge&category=integration)
+
+Or manually:
 
 1. HACS → ⋮ → **Custom repositories** → add `https://github.com/DJS91/HA-EvakoolFridge`
    with category **Integration**.
