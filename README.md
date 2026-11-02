@@ -20,7 +20,7 @@ It is not affiliated with or supported by EVAKOOL.
 
 [![Open your Home Assistant instance and open this repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=DJS91&repository=HA-EvakoolFridge&category=integration)
 
-Or manually:
+Or add the repository manually:
 
 1. HACS → ⋮ → **Custom repositories** → add `https://github.com/DJS91/HA-EvakoolFridge`
    with category **Integration**.
