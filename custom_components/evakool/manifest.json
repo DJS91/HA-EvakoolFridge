@@ -16,5 +16,5 @@
   "issue_tracker": "https://github.com/DJS91/HA-EvakoolFridge/issues",
   "loggers": ["bleak", "bleak_retry_connector"],
   "requirements": [],
-  "version": "0.1.0"
+  "version": "1.0.0"
 }
