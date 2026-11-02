@@ -3,7 +3,7 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 [![GitHub Release](https://img.shields.io/github/release/DJS91/HA-EvakoolFridge.svg)](https://github.com/DJS91/HA-EvakoolFridge/releases)
 
-Unofficial custom integration that connects Home Assistant directly to an
+Unofficial custom integration that connects Home Assistant servers with Bluetooth hardware directly to an
 **EVAKOOL Down Under / CoolRide** dual-zone fridge over Bluetooth Low Energy.
 It is not affiliated with or supported by EVAKOOL.
 
