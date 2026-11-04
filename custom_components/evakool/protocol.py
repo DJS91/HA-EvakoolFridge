@@ -1,5 +1,4 @@
-"""EVAKOOL Down Under / CoolRide BLE protocol (no Home Assistant imports).
-"""
+"""EVAKOOL Down Under / CoolRide BLE protocol (no Home Assistant imports)."""
 
 from __future__ import annotations
 
