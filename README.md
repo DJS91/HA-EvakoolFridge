@@ -107,18 +107,3 @@ logger:
 
 If your firmware sends a frame the parser rejects, open an issue with the logged
 `RX` frame.
-
-## Development
-
-```powershell
-uv sync --python 3.14 --all-groups
-uv run ruff check .
-uv run pytest
-```
-
-The protocol and client tests need no Home Assistant install. The `homeassistant-test`
-group installs Home Assistant 2026.10.4 plus the requirements of its `bluetooth`
-component for the HA-level tests. CI also runs `hassfest` and HACS validation.
-
-Hardware validation is still required: these tests use a simulated fridge, not a
-real radio.
