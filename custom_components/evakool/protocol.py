@@ -1,8 +1,4 @@
 """EVAKOOL Down Under / CoolRide BLE protocol (no Home Assistant imports).
-
-Ported from Open-DiKey's ``EvakoolProtocol.kt``, which mirrors the official
-Down Under II 2.0.0 app: ASCII commands are written without response to E531,
-and newline-delimited CSV status frames arrive as E532 notifications.
 """
 
 from __future__ import annotations

@@ -1,4 +1,4 @@
-"""Protocol tests ported from Open-DiKey's EvakoolProtocolTest.kt."""
+"""Protocol tests for the Evakool fridge protocol."""
 
 import pytest
 from evakool_unit.protocol import (

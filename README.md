@@ -61,8 +61,8 @@ unavailable, and the integration keeps searching for the fridge on every poll.
 
 Temperatures are reported in the fridge's configured unit (°C or °F), and Home
 Assistant converts them to your display unit. Targets are limited to
-**-25..20 °C (-13..68 °F)**, the same conservative guard used by Open-DiKey; this is not
-your model's rating.
+**-25..20 °C (-13..68 °F)** as a conservative software limit; this is not your
+model's rating.
 
 ### How controls behave
 
