@@ -110,5 +110,5 @@ If your firmware sends a frame the parser rejects, open an issue with the logged
 
 ## Disclaimer
 
-The code in this integration is original. The Bluetooth fridge code originated from my own fork of open-dikey, and it was not taken from any other author. This project is not affiliated with or endorsed by EVAKOOL.
+The EVAKOOL protocol code in this integration was written by me. It was first developed in my own fork, [DJS91/Open-DiKey](https://github.com/DJS91/Open-DiKey) (fridge code first committed 2026-10-30), and does not come from the upstream Open-DiKey project or any other author. This project is not affiliated with or endorsed by EVAKOOL.
 

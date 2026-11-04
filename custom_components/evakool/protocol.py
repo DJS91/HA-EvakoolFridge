@@ -1,8 +1,10 @@
 """EVAKOOL Down Under / CoolRide BLE protocol (no Home Assistant imports).
 
-Originality statement: the Bluetooth fridge code originates from my own fork of
-Open-DiKey (DJS91/Open-DiKey), not from sy-phy/open-dikey. It is my own original
-work and was not taken from any other author. You are welcome to check that as a fact.
+Provenance: this protocol implementation was ported by its author from the EVAKOOL
+fridge code the author wrote in their own fork, DJS91/Open-DiKey (EvakoolProtocol.kt,
+first committed 2026-10-30). That fridge code was added in the fork and does not
+come from the upstream Open-DiKey project. Released under this repository's MIT
+license by its sole author. You are welcome to check that as a fact.
 """
 
 from __future__ import annotations
