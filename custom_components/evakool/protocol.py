@@ -1,4 +1,9 @@
-"""EVAKOOL Down Under / CoolRide BLE protocol (no Home Assistant imports)."""
+"""EVAKOOL Down Under / CoolRide BLE protocol (no Home Assistant imports).
+
+Originality statement: the Bluetooth fridge code originates from my own fork of
+Open-DiKey (DJS91/Open-DiKey), not from sy-phy/open-dikey. It is my own original
+work and was not taken from any other author. You are welcome to check that as a fact.
+"""
 
 from __future__ import annotations
 

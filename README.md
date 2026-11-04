@@ -107,3 +107,8 @@ logger:
 
 If your firmware sends a frame the parser rejects, open an issue with the logged
 `RX` frame.
+
+## Disclaimer
+
+The code in this integration is original. The Bluetooth fridge code originated from my own fork of open-dikey, and it was not taken from any other author. This project is not affiliated with or endorsed by EVAKOOL.
+
